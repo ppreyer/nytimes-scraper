@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>NY Times Scrapper</title>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>NY Times Scraper</h1>
+        {{#each articles}}
+          <p class="saved" id="{{this._id}}">Title: {{this.title}} Link: {{this.link}}</p>
+          <button type="submit" id="{{this._id}}">Save Article</button>
+        {{/each}}
+      <div id="notes"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="app.js"></script>
+  </div>
+  </body>
+</html>
