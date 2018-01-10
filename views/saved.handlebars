@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Scraping With Mongoose</title>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>NY Times Scraper</h1>
+      {{#each articles}}
+          <p id="{{this._id}}">Title: {{this.title}} Link: {{this.link}}</p>
+          <button type="submit" class="comment" id="{{this._id}}">Add Comment</button>
+      {{/each}}
+      <div id="saved"></div>
+      <div id="notes"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
