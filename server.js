@@ -41,7 +41,7 @@ mongoose.connect("mongodb://localhost/news-scraper", {
 app.get("/", function(req, res) {
   db.Article
     .find({}, function(err, data) {
-      res.render("index", {articles: data});
+      return res.render("index", {articles: data});
     })
 })
 
@@ -59,9 +59,8 @@ app.get("/scrape", function(req, res) {
       db.Article
         .create(result)
         .then(function(article) {
-          console.log(article);
-          res.send("Scrape Complete");
-          res.redirect("/");
+          // res.send("Scrape Complete");
+          return res.refresh();
         })
         .catch(function(err) {
           res.send(err);
@@ -88,8 +87,17 @@ app.post("/saved/:id", function(req, res) {
   db.Article
     .findByIdAndUpdate(req.params.id, {$set: {saved: true}}, function(err, data) {
       res.redirect("/");
-  })
-})
+  });
+});
+
+// post route to save clicked article to mongo and set saved status to false
+app.post("/unsaved/:id", function(req, res) {
+  db.Article
+    .findByIdAndUpdate(req.params.id, {$set: {saved: false}}, function(err, data) {
+      res.redirect("/saved");
+  });
+});
+
 
 // get route to find all the saved articles and send as json to client
 app.get("/saved", function(req, res) {
@@ -105,9 +113,41 @@ app.get("/saved", function(req, res) {
      });
 });
 
+// post route to find article to update it's comments array
+app.post("/articles1/:id", function(req, res) {
+  console.log("in articlesId", req.body);
+  db.Comment
+      .create(req.body)
+      .then(function(comment) {
+        console.log("new comment", comment);
+        return db.Article.findByIdAndUpdate({_id: req.params.id}, {comments: comment._id}, {new: true});
+      })
+      .then(function(article) {
+        console.log("updated article", article);
+        res.json(article);
+      })
+      .catch(function(err){
+        res.send(err);
+      });
+});
+
+// post route to find article to delete the selected comment
+// app.post("/articles2/:id", function(req, res) {
+//   console.log("in articlesId", req.body);
+//     db.Article.find({_id: req.params.id}).remove();
+//       })
+//       .then(function(article) {
+//         console.log("updated article", article);
+//         res.json(article);
+//       })
+//       .catch(function(err){
+//         res.send(err);
+//       });
+// });
+
+
 // get route to find article that was clicked to add comment
 app.get("/articles/:id", function(req, res) {
-  console.log("I got here");
   db.Article.findOne({
     _id: req.params.id
   })
@@ -119,6 +159,20 @@ app.get("/articles/:id", function(req, res) {
         res.send(err);
       });
 });
+
+// post route to find article that was clicked to add comment
+// app.post("/articles/:id", function(req, res) {
+//   db.Article.findOne({
+//     _id: req.params.id
+//   })
+//     .populate("comments").then(function(article) {
+//       console.log("Article", article);
+//       return res.json(article);
+//     })
+//       .catch(function(err) {
+//         res.send(err);
+//       });
+// });
 
 // Start the server
 app.listen(PORT, function() {

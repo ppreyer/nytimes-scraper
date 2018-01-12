@@ -21,8 +21,36 @@
 //   }
 // });
 
+// get route to trigger scrape route on server
+$("#scrape").on("click", function() {
+  $.ajax({
+    method: "GET",
+    url: "/scrape"
+  });
+});
+
+// get route to trigger saved articles route on server
+// $("#savedarticles").on("click", function() {
+//   $.ajax({
+//     method: "GET",
+//     url: "/saved"
+//   });
+// });
+
+// post unsaved article from client to server
+$(document).on("click", ".unsave", function(e) {
+  e.preventDefault();
+  var articleId = $(this).attr("id");
+  console.log("ID", articleId);
+  $.ajax({
+    method: "POST",
+    url: "/unsaved/" + articleId
+  });
+});
+
 // post saved article from client to server
-$(".saved").one("click", function() {
+$(document).on("click", ".saved", function(e) {
+  e.preventDefault();
   var articleId = $(this).attr("id");
   console.log("ID", articleId);
   $.ajax({
@@ -32,7 +60,7 @@ $(".saved").one("click", function() {
 });
 
 // get request to retrieve info about clicked article from server
-$(".comment").one("click", function() {
+$(".comment").on("click", function() {
   $("#notes").empty();
   var articleId = $(this).attr("id");
   console.log("ID", articleId);
@@ -41,15 +69,67 @@ $(".comment").one("click", function() {
     url: "/articles/" + articleId
   })
     .then(function(data) {
-            // The title of the article
-      $("#notes").append("<h2>" + data.title + "</h2>");
-      // An input to enter a new title
-      $("#notes").append("<input id='titleinput' name='title' >");
-      // A textarea to add a new note body
-      $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
-      // A button to submit a new note, with the id of the article saved to it
-      $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
+      console.log("I get here.", data);
+      $(".modal-title").append(`<h2 id="${data._id}"> Article ID: ${data._id} </h2>`);
+      $('.addnote').attr('id', `${data._id}`);
     });
+});
+
+
+// post request to submit comment data for specific article
+$(".addnote").on("click", function() {
+  console.log("button click");
+  var articleId = $(".panel-title").attr("id");
+  // console.log("Article ID", articleId);
+  $.ajax({
+    method: "POST",
+    url: "articles1/" + articleId,
+    data: { 
+      body: $("#addnote").val()
+    }
+  })
+    .then(function(err, data) {
+      if (err) throw err;
+      console.log("server data", data);
+      $(".addnote").empty();
+    });
+   $("#titleinput").val("");
+   $("#bodyinput").val(""); 
+});
+
+$(".addnote").on("click", function() {
+  var articleId = $(this).attr("id");
+  console.log("ID", articleId)
+  $.ajax({
+    method: "GET",
+    url: "/articles/" + articleId
+  })
+    .then(function(data) {
+      console.log("data", data);
+      $("#notesection").append(`<p>${data.comments.body}</p>`)
+    })
+});
+
+// post request to delete comment data for specific article
+$("#notes").on("click", "#deletenote", function() {
+  console.log("button click");
+  var articleId = $("#deletenote").attr("data-id");
+  console.log("Article ID", articleId);
+  $.ajax({
+    method: "POST",
+    url: "articles2/" + articleId,
+    data: {
+      title: $("#titleinput").val(),
+      body: $("#bodyinput").val()
+    }
+  })
+    .then(function(err, data) {
+      if (err) throw err;
+      console.log("server data", data);
+      $("#notes").empty();
+    });
+   $("#titleinput").val("");
+   $("#bodyinput").val(""); 
 });
 
 

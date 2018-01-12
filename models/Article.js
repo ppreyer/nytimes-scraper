@@ -18,14 +18,17 @@ var ArticleSchema = new Schema({
       type: Boolean,
       default: false
     },
-    comments: [
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    comments:
       {
         type: Schema.Types.ObjectId,
         ref: "Comment"
       }
-    ]
 });
 
 var Article = mongoose.model("Article", ArticleSchema);
 
-module.exports = Article;
+module.exports = Article;   
