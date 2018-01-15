@@ -1,0 +1,29 @@
+* {
+  font-family: 'Libre Baskerville', serif;
+}
+
+.saved, .unsave, .comment {
+  float: right;
+}
+
+.unsave, .comment {
+  margin: 5px;
+}
+
+.jumbotron {
+  padding: 150px;
+}
+
+.jumbotext {
+  text-align: center
+}
+
+#addnote {
+  width: 95%;
+  min-width: 95%;
+  max-width: 95%;
+}
+
+.delete {
+  margin: 5px;
+}

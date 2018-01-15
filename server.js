@@ -40,10 +40,10 @@ mongoose.connect("mongodb://localhost/news-scraper", {
 // get route to find all of the articles
 app.get("/", function(req, res) {
   db.Article
-    .find({}, function(err, data) {
+    .find({}, null, {sort: {created: -1}}, function(err, data) {
       return res.render("index", {articles: data});
-    })
-})
+    });
+});
 
 // get route to scrape nytimes
 app.get("/scrape", function(req, res) {
@@ -51,15 +51,18 @@ app.get("/scrape", function(req, res) {
     .then(function(response) {
       var $ = cheerio.load(response.data);
       var result = {};
-    $("h2.story-heading")
+    $("article.story")
       .each(function(i, element) {
-        result.title = $(this).children().text();
-        result.link = $(this).children().attr("href");
-
+        result.title = $(this).find("h2.story-heading").text();
+        result.link = $(this).find("a").attr("href");
+        result.author = $(this).find("p.byline").text();
+        result.summary = $(this).find("p.summary").text();
+        result.image = $(this).find("div.thumb").children().attr("href");
       db.Article
         .create(result)
         .then(function(article) {
           // res.send("Scrape Complete");
+          console.log("article contents", article);
           return res.refresh();
         })
         .catch(function(err) {
@@ -70,17 +73,17 @@ app.get("/scrape", function(req, res) {
 });
 
 // get route to grab all of the articles from the database and send to client
-app.get("/articles", function(req, res) {
-  db.Article
-    .find({})
-    .then(function(articles) {
-      console.log("ID", articles._id)
-      return res.json(articles);
-    })
-    .catch(function(err) {
-      res.send(err);
-    });
-});
+// app.get("/articles", function(req, res) {
+//   db.Article
+//     .find({})
+//     .then(function(articles) {
+//       console.log("ID", articles._id)
+//       return res.json(articles);
+//     })
+//     .catch(function(err) {
+//       res.send(err);
+//     });
+// });
 
 // post route to save clicked article to mongo and set saved status to true
 app.post("/saved/:id", function(req, res) {
@@ -131,19 +134,17 @@ app.post("/articles1/:id", function(req, res) {
       });
 });
 
-// post route to find article to delete the selected comment
-// app.post("/articles2/:id", function(req, res) {
-//   console.log("in articlesId", req.body);
-//     db.Article.find({_id: req.params.id}).remove();
-//       })
-//       .then(function(article) {
-//         console.log("updated article", article);
-//         res.json(article);
-//       })
-//       .catch(function(err){
-//         res.send(err);
-//       });
-// });
+// get route to delete specific note
+app.delete("/delete/:id", function(req, res) {
+  console.log("i got here", req.params.id);
+  db.Comment.findOneAndRemove({
+    _id: req.params.id
+  }, function(err, data) {
+      console.log("here", data);
+      if (err) throw err;
+      res.json(data);
+    });
+});
 
 
 // get route to find article that was clicked to add comment
