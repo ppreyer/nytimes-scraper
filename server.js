@@ -28,10 +28,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Use express.static to serve the public folder as a static directory
 app.use(express.static("public"));
 
+
+var MONGODB_URI = "mongodb://heroku_n2lbms4d:c8cgq3hglf1vs06dsj01u38i3v@ds119738.mlab.com:19738/heroku_n2lbms4d"
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-var MONGODB_URI = MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 mongoose.connect(MONGODB_URI, {
   useMongoClient: true
 });
