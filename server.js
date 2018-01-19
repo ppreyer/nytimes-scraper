@@ -31,19 +31,25 @@ app.use(express.static("public"));
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 
-// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-// mongoose.connect("mongodb://localhost/news-scraper", {
-//   useMongoClient: true
-// });
-
-var databaseUrl = "mongodb://localhost/news-scraper";
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
 if (process.env.MONGODB_URI) {
+
   mongoose.connect(process.env.MONGODB_URI);
-}
-else {
-  mongoose.connect(databaseUrl);
-};
+} else {
+  mongoose.connect("mongodb://localhost/news-scraper", {
+  useMongoClient: true
+});
+ };
+
+// var databaseUrl = "mongodb://localhost/news-scraper";
+
+// if (process.env.MONGODB_URI) {
+//   mongoose.connect(process.env.MONGODB_URI);
+// }
+// else {
+//   mongoose.connect(databaseUrl);
+// };
 
 mongoose.Promise = Promise;
 
