@@ -11,7 +11,9 @@
 }
 
 .jumbotron {
-  padding: 150px;
+  padding: 250px;
+  background-image: url("nytimes.png");
+  background-size: cover;
 }
 
 .jumbotext {

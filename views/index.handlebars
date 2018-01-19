@@ -35,8 +35,6 @@
 <div class="col-md-12">
    <div class="jumbotron">
      <div class="jumbotext">
-        <h1>New York Times Scraper</h1>
-        <img src="images.png" />
      </div>
   </div>
   {{#if articles}}
@@ -53,7 +51,7 @@
                 <img src="{{this.image}}" />
                 <br><br>
             {{/if}}
-                Link: {{this.link}} 
+                <a href="{{this.link}}" target="_blank"> Link: {{this.link}} </a>
                 <br><br>
             {{#if this.summary}}
                 Summary: {{this.summary}}
